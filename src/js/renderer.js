@@ -217,15 +217,15 @@ export default class FormeoRenderer {
   evaluateCondition = ({ sourceProperty, targetProperty, comparison, target }, evt) => {
     const comparisonMap = {
       equals: isEqual,
-      notEquals: (source, target) => !isEqual(source, target),
-      contains: (source, target) => source.includes(target),
-      notContains: (source, target) => !source.includes(target),
+      notEquals: (source, target, targetElement) => !isEqual(source, target, targetElement),
+      contains: (source, target, targetElement) => (targetElement && targetElement.type === 'checkbox' && targetElement.value === target) ? targetElement.checked : source.includes(target),
+      notContains: (source, target, targetElement) => (targetElement && targetElement.type === 'checkbox' && targetElement.value === target) ? !targetElement.checked : !source.includes(target),
     }
 
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
     const sourceValue = String(evt.target[sourceProperty])
     const targetValue = String(isAddress(target) ? this.getComponent(target)[targetProperty] : target)
-    return comparisonMap[comparison] && comparisonMap[comparison](sourceValue, targetValue)
+    return comparisonMap[comparison] && comparisonMap[comparison](sourceValue, targetValue, evt.currentTarget)
   }
 
   execResult = ({ assignment, target, targetProperty, value }) => {
@@ -236,11 +236,19 @@ export default class FormeoRenderer {
             elem[targetProperty] = value
           },
           isNotVisible: () => {
-            elem.parentElement.setAttribute('hidden', true)
+            let parent = elem.parentElement;
+            while (!parent.parentElement.classList.contains('formeo-column')) {
+                parent = parent.parentElement;
+            }
+            parent.setAttribute('hidden', true);
             elem.required = false // Hidden input cannot be required.
           },
           isVisible: () => {
-            elem.parentElement.removeAttribute('hidden')
+            let parent = elem.parentElement;
+            while (!parent.parentElement.classList.contains('formeo-column')) {
+                parent = parent.parentElement;
+            }
+            parent.removeAttribute('hidden')
             elem.required = elem._required
           },
         }
@@ -263,7 +271,7 @@ export default class FormeoRenderer {
     const componentId = address.slice(address.indexOf('.') + 1)
     const component = isExternalAddress(address)
       ? this.external[componentId]
-      : this.renderedForm.querySelector(`#f-${componentId}`)
+      : this.renderedForm.querySelector(`[name^=f-${componentId}]`)
     return component
   }
 

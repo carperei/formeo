@@ -407,6 +407,7 @@ class DOM {
             type: fieldType,
             value: option.value || '',
             id: `${id}-${i}`,
+            required: elem.attrs.required,
             ...rest,
           },
           action,

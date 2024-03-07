@@ -64,6 +64,21 @@ export default class FormeoRenderer {
     this.applyConditions()
 
     this.container.appendChild(this.renderedForm)
+    
+    document.querySelectorAll('input[type="checkbox"][data-required="true"]').forEach((cbGroup) => {
+      cbGroup.addEventListener('change', function(evt) {
+        const parent = evt.currentTarget.closest('.f-field-group')
+        if(evt.currentTarget.checked) {
+          parent.querySelectorAll('input[type="checkbox"]').forEach((cbElement) => {
+            cbElement.removeAttribute('required')
+          })
+        } else {
+          parent.querySelectorAll('input[type="checkbox"]').forEach((cbElement) => {
+            cbElement.setAttribute('required', true)
+          })
+        }
+      })
+    })
   }
 
   orderChildren = (type, order) => order.reduce((acc, cur) => [...acc, this.form[type][cur]], [])

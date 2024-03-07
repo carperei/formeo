@@ -162,10 +162,11 @@ export default class EditPanel {
     const fieldOptionData = this.field.get('options')
     const type = metaId === 'select' ? 'option' : metaId
     const newOptionLabel = i18n.get(`newOptionLabel`, { type }) || 'New Option'
+    const newOptionValue = `${type}-${this.data.length + 1}`
     const itemKey = `options.${this.data.length}`
 
     const optionTemplate = fieldOptionData.length ? cleanObj(fieldOptionData[fieldOptionData.length - 1]) : {}
-    const itemData = Object.assign({}, optionTemplate, { label: newOptionLabel, value: hyphenCase(newOptionLabel) })
+    const itemData = Object.assign({}, optionTemplate, { label: newOptionLabel, value: newOptionValue })
     const newOption = new EditPanelItem({
       key: itemKey,
       data: itemData,

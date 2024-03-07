@@ -397,6 +397,12 @@ class DOM {
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
 
+    let dataRequired;
+    if(fieldType === 'checkbox') {
+      dataRequired = {
+        'data-required': elem.attrs.required
+      }
+    }
     const optionMap = (option, i) => {
       const { label, ...rest } = option
       const defaultInput = () => {
@@ -408,6 +414,7 @@ class DOM {
             value: option.value || '',
             id: `${id}-${i}`,
             required: elem.attrs.required,
+            ...dataRequired,
             ...rest,
           },
           action,

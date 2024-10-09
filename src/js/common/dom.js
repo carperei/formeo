@@ -173,7 +173,7 @@ class DOM {
     if (elem.config) {
       if (
         elem.config.label &&
-        elem.meta && elem.meta.group !== 'layout' &&
+        ((elem.meta && elem.meta.group !== 'layout') || !elem.meta) &&
         ((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) &&
         !isPreview
       ) {
